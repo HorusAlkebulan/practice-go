@@ -33,6 +33,35 @@ func main() {
 	root, ext := SplitExt(filename)
 	fmt.Printf("%s -> %s, %s\n", filename, root, ext)
 	fmt.Printf("%s -> %#v, %#v\n", filename, root, ext)
+
+	values := []float64{2, 4, 8}
+	mean, err := Mean(values)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		return
+	}
+
+	fmt.Print("values: ")
+	fmt.Println(values)
+	fmt.Printf("mean: %.2f", mean)
+}
+
+func Sum(values []float64) float64 {
+	sum := 0.0
+	for _, value := range values {
+		sum = sum + value
+	}
+	return sum
+}
+func Mean(values []float64) (float64, error) {
+	if len(values) == 0 {
+		return 0.0, fmt.Errorf("Mean of an empty slice")
+	}
+
+	sum := Sum(values)
+	count := float64(len(values))
+	mean := sum / count
+	return mean, nil
 }
 
 func SplitExt(path string) (string, string) {
