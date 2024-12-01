@@ -5,7 +5,9 @@ package main
 import (
 	"fmt"
 	"sort"
+	"strings"
 	"time"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -16,6 +18,57 @@ func main() {
 	averageDivisibleBy3or5()
 	printBanner()
 	getMedian()
+	countOfWord()
+	charFrequency()
+
+	n := 4
+	result := CollatzStep(n)
+	fmt.Printf("CollatzStep(%d): %d", n, result)
+
+	n = 5
+	result = CollatzStep(n)
+	fmt.Printf("CollatzStep(%d): %d", n, result)
+}
+
+func charFrequency() {
+	var poem = `
+	those who do not feel this love
+	pulling them like a river
+	those who do not drink dawn
+	like a cup of spring water
+	or take in sunset like supper
+	those who do not want to change
+	let them sleep
+	`
+	fmt.Print("Poem: ")
+	fmt.Println(poem)
+
+	counts := make(map[rune]int)
+	globalCount := 0.0 // we will use in float calculation
+
+	for _, c := range poem {
+		if unicode.IsSpace(c) {
+			continue
+		}
+		counts[c]++
+		globalCount++
+	}
+
+	var chars []rune // rune = python char
+	for c := range counts {
+		chars = append(chars, c)
+	}
+	sort.Slice(chars, func(i, j int) bool {
+		c1, c2 := chars[i], chars[j]
+		return counts[c1] > counts[c2] // gives us reverse order
+	})
+
+	// report final results
+	for _, c := range chars {
+		n := counts[c]
+		f := float64(n) / globalCount * 100
+		fmt.Printf("%c: %.2f\n", c, f)
+	}
 }
 
 func showTime() {
@@ -102,4 +155,38 @@ func getMedian() {
 	fmt.Println("Median:")
 	fmt.Println(median)
 
+}
+
+func countOfWord() {
+
+	var poem = `
+	those who do not feel this love
+	pulling them like a river
+	those who do not drink dawn
+	like a cup of spring water
+	or take in sunset like supper
+	those who do not want to change
+	let them sleep
+	`
+
+	frequency := make(map[string]int)
+	for _, word := range strings.Fields(poem) {
+		frequency[word]++
+	}
+
+	maxW, maxC := "", 0
+	for w, c := range frequency { // range is similar to enumerate
+		if c > maxC {
+			maxC = c
+			maxW = w
+		}
+	}
+	fmt.Print("Poem: ")
+	fmt.Println(poem)
+	fmt.Print("maxW: ")
+	fmt.Println(maxW)
+	fmt.Print("maxC: ")
+	fmt.Println(maxC)
+	fmt.Print("Frequency: ")
+	fmt.Println(frequency)
 }
