@@ -22,12 +22,32 @@ func main() {
 	charFrequency()
 
 	n := 4
-	result := CollatzStep(n)
-	fmt.Printf("CollatzStep(%d): %d", n, result)
+	result := collatzStep(n)
+	fmt.Printf("collatzStep(%d): %d\n", n, result)
 
 	n = 5
-	result = CollatzStep(n)
-	fmt.Printf("CollatzStep(%d): %d", n, result)
+	result = collatzStep(n)
+	fmt.Printf("collatzStep(%d): %d\n", n, result)
+
+	filename := "app.go"
+	root, ext := SplitExt(filename)
+	fmt.Printf("%s -> %s, %s\n", filename, root, ext)
+	fmt.Printf("%s -> %#v, %#v\n", filename, root, ext)
+}
+
+func SplitExt(path string) (string, string) {
+	i := strings.LastIndex(path, ".")
+	if i == -1 {
+		return path, ""
+	}
+	return path[:i], path[i:]
+}
+
+func collatzStep(n int) int {
+	if n%2 == 0 {
+		return n / 2
+	}
+	return n*3 + 1
 }
 
 func charFrequency() {
