@@ -84,7 +84,7 @@ func printBanner() {
 }
 
 func getMedian() {
-	nums := []float64{2, 1, 3}
+	nums := []float64{2, 1, 3, 0, 6, 8, 9}
 	fmt.Print("nums: ")
 	fmt.Println(nums)
 
