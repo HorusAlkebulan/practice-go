@@ -24,6 +24,7 @@ type User struct {
 	Role  Role
 }
 
+// Our first use of passing by ref!
 func Promote(u *User, r Role) {
 	u.Role = r
 }
