@@ -24,7 +24,7 @@ type User struct {
 	Role  Role
 }
 
-func Promote(u User, r Role) {
+func Promote(u *User, r Role) {
 	u.Role = r
 }
 
@@ -41,7 +41,7 @@ func main() {
 		Viewer,
 	}
 	fmt.Printf("Promoting user: name=%s, role=%s\n", u.Login, u.Role)
-	Promote(u, Admin)
+	Promote(&u, Admin)
 	fmt.Printf("user: name=%s, role=%s\n", u.Login, u.Role)
 }
 
