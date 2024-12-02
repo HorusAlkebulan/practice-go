@@ -9,6 +9,25 @@ import (
 	"unicode/utf8"
 )
 
+// Role enum
+type Role string
+
+const (
+	Viewer    Role = "viewer"
+	Developer Role = "developer"
+	Admin     Role = "admin"
+)
+
+// User "class"
+type User struct {
+	Login string
+	Role  Role
+}
+
+func Promote(u User, r Role) {
+	u.Role = r
+}
+
 func main() {
 	msg := "Hello Gophers"
 	fmt.Println(msg)
@@ -16,6 +35,14 @@ func main() {
 	averageDivisibleBy3or5()
 	printBanner()
 	getMedian()
+
+	u := User{
+		"elliot",
+		Viewer,
+	}
+	fmt.Printf("Promoting user: name=%s, role=%s\n", u.Login, u.Role)
+	Promote(u, Admin)
+	fmt.Printf("user: name=%s, role=%s\n", u.Login, u.Role)
 }
 
 func showTime() {
