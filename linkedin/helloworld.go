@@ -72,24 +72,6 @@ func main() {
 	fmt.Printf("User %s -> %s\n", user.Login, user.Role)
 }
 
-// a string enum
-type Role string
-
-const (
-	Viewer    Role = "viewer"
-	Developer Role = "developer"
-	Admin     Role = "admin"
-)
-
-type User struct {
-	Login string
-	Role  Role
-}
-
-func Promote(user *User, role Role) {
-	user.Role = role
-}
-
 func Sum(values []float64) float64 {
 	sum := 0.0
 	for _, value := range values {
