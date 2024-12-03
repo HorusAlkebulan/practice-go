@@ -148,10 +148,30 @@ func main() {
 	fmt.Printf("%d + %d = %d\n", 1, 2, Add(1, 2))
 	fmt.Printf("%f + %f = %f\n", 1.01, 2.02, Add(1.01, 2.02))
 	fmt.Printf("%s + %s = %s\n", "Horus", "Alkebu-Lan", Add("Horus ", "Alkebu-Lan"))
+
+	fmt.Println("Using Go routines")
+	for i := 0; i < 5; i++ {
+		go worker(i)
+	}
+
+	fmt.Println("Resuming main")
+	time.Sleep(time.Second)
+}
+
+func worker(n int) {
+	ms := 100.0
+	msd := time.Duration(ms)
+	time.Sleep(msd * time.Millisecond)
+	fmt.Printf("Using duration %f, running go routine worker %d\n", ms, n)
+}
+
+type Addable interface {
+	int | float64 | string
 }
 
 // Generics
-func Add[T int | float64 | string](a, b T) T {
+// without interface: func Add[T int | float64 | string](a, b T) T {
+func Add[T Addable](a, b T) T {
 	return a + b
 }
 
