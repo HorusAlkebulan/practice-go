@@ -4,10 +4,55 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"time"
 	"unicode/utf8"
 )
+
+func main() {
+	msg := "Hello Gophers"
+	fmt.Println(msg)
+	showTime()
+	averageDivisibleBy3or5()
+	printBanner()
+	getMedian()
+
+	u := User{
+		"elliot",
+		Viewer,
+	}
+	fmt.Printf("Promoting user: name=%s, role=%s\n", u.Login, u.Role)
+	Promote(&u, Admin)
+	fmt.Printf("user: name=%s, role=%s\n", u.Login, u.Role)
+
+	data, err := fileHead("head.png", 8)
+	if err != nil {
+		fmt.Println("Error:", err)
+	} else {
+		fmt.Println("File bytes: ", data)
+	}
+}
+
+func fileHead(fileName string, size int) ([]byte, error) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	// same as using 'with' in python
+	defer file.Close()
+
+	buf := make([]byte, size)
+	fileSize, err := file.Read(buf)
+
+	if err != nil {
+		return nil, err
+	}
+	if fileSize != size {
+		return nil, fmt.Errorf("%q file size mismatch", fileName)
+	}
+	return buf, nil
+}
 
 // Role enum
 type Role string
@@ -28,24 +73,6 @@ type User struct {
 func Promote(u *User, r Role) {
 	u.Role = r
 }
-
-func main() {
-	msg := "Hello Gophers"
-	fmt.Println(msg)
-	showTime()
-	averageDivisibleBy3or5()
-	printBanner()
-	getMedian()
-
-	u := User{
-		"elliot",
-		Viewer,
-	}
-	fmt.Printf("Promoting user: name=%s, role=%s\n", u.Login, u.Role)
-	Promote(&u, Admin)
-	fmt.Printf("user: name=%s, role=%s\n", u.Login, u.Role)
-}
-
 func showTime() {
 	nowtime := time.Now()
 	fmt.Println("The time is now ")
