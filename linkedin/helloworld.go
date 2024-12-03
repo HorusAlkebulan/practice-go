@@ -3,7 +3,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"sort"
 	"strings"
@@ -148,10 +150,7 @@ func main() {
 		fmt.Printf("- %#v", item)
 	}
 
-	fmt.Println("Using generics")
-	fmt.Printf("%d + %d = %d\n", 1, 2, Add(1, 2))
-	fmt.Printf("%f + %f = %f\n", 1.01, 2.02, Add(1.01, 2.02))
-	fmt.Printf("%s + %s = %s\n", "Horus", "Alkebu-Lan", Add("Horus ", "Alkebu-Lan"))
+	usingGenerics()
 
 	// NOTE: Looks like you can't do both of these at the same time. You get a channels block.
 	// time.Sleep(time.Duration(5) * time.Second)
@@ -177,6 +176,42 @@ func main() {
 	fmt.Printf("Received %d from the channel\n", val)
 
 	demoWaitGroup()
+
+	url := "https://www.linkedin.com/learning/go-for-python-developers"
+	timeout := 5 * time.Millisecond
+	res := CheckURL(url, timeout)
+	fmt.Printf("CheckURL response with timeout %v: %t\n", timeout, res)
+	timeout = 5 * time.Second
+	res = CheckURL(url, timeout)
+	fmt.Printf("CheckURL response with timeout %v: %t\n", timeout, res)
+
+}
+
+func CheckURL(url string, timeout time.Duration) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return false
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return false
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return false
+	}
+
+	return true
+}
+func usingGenerics() {
+	fmt.Println("Using generics")
+	fmt.Printf("%d + %d = %d\n", 1, 2, Add(1, 2))
+	fmt.Printf("%f + %f = %f\n", 1.01, 2.02, Add(1.01, 2.02))
+	fmt.Printf("%s + %s = %s\n", "Horus", "Alkebu-Lan", Add("Horus ", "Alkebu-Lan"))
 }
 
 func demoWaitGroup() {
