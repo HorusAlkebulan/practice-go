@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 	"unicode/utf8"
@@ -51,6 +52,9 @@ type User struct {
 func Promote(u *User, r Role) {
 	u.Role = r
 }
+
+// NOTE: Fixes issue with fatal error: all goroutines are asleep - deadlock!
+var waitGroup sync.WaitGroup
 
 func main() {
 	msg := "Hello Gophers"
@@ -149,29 +153,34 @@ func main() {
 	fmt.Printf("%f + %f = %f\n", 1.01, 2.02, Add(1.01, 2.02))
 	fmt.Printf("%s + %s = %s\n", "Horus", "Alkebu-Lan", Add("Horus ", "Alkebu-Lan"))
 
+	// NOTE: Looks like you can't do both of these at the same time. You get a channels block.
+	// time.Sleep(time.Duration(5) * time.Second)
+
+	fmt.Println("Using Go routines")
+	for i := 0; i < 5; i++ {
+		waitGroup.Add(1)
+		go worker(i)
+	}
+
+	fmt.Println("Resuming main, waiting to allow threads to complete...")
+	waitGroup.Wait()
+	// time.Sleep(time.Duration(5) * time.Second)
+
 	fmt.Println("Using channels")
 	channels := make(chan int)
 	channels <- 99    // send
 	val := <-channels // receive
 	fmt.Printf("Received %d from the channel\n", val)
-	time.Sleep(time.Duration(5) * time.Second)
-
-	// NOTE: Looks like you can't do both of these at the same time. You get a channels block.
-
-	fmt.Println("Using Go routines")
-	for i := 0; i < 5; i++ {
-		go worker(i)
-	}
-	fmt.Println("Resuming main, waiting to allow threads to complete...")
-	time.Sleep(time.Duration(5) * time.Second)
-
 }
 
 func worker(n int) {
-	ms := 100.0
-	msd := time.Duration(ms)
-	time.Sleep(msd * time.Millisecond)
-	fmt.Printf("Using duration %f, running go routine worker %d\n", ms, n)
+	defer waitGroup.Done()
+
+	// ms := 100.0
+	// msd := time.Duration(ms)
+	// time.Sleep(msd * time.Millisecond)
+	// fmt.Printf("Using duration %f, running go routine worker %d\n", ms, n)
+	fmt.Printf("Using wait group, running go routine worker %d\n", n)
 }
 
 type Addable interface {
