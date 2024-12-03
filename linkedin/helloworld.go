@@ -98,6 +98,103 @@ func main() {
 	} else {
 		fmt.Println("File bytes: ", data)
 	}
+
+	loc, err := NewLocation(32.5253837, 34.9427434)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+	fmt.Println(loc)
+
+	latitude := 45.5678901
+	longitude := -23.456780
+
+	fmt.Printf("Moving to %f, %f\n", latitude, longitude)
+	loc.Move(latitude, longitude)
+	fmt.Println("New location:", loc)
+
+	name := "2021 BMW X7"
+	fmt.Println("Creating new car")
+	car, err := NewCar(name, latitude, longitude)
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	fmt.Printf("Car status: %#v\n", car)
+	// NOTE: Why does this work? Shouldn't it be something like car.location.Move()?
+	car.Move(0.0, 0.0)
+	fmt.Printf("Car status: %#v\n", car)
+
+	items := []Moveable{
+		&Location{-1.0, -2.0},
+		&Car{
+			ID: "Volvo XC60",
+			Location: Location{
+				Latitude:  -3.0,
+				Longitude: -4.0,
+			},
+		},
+	}
+	fmt.Println("Before move of items")
+	for _, item := range items {
+		fmt.Printf("- %#v", item)
+	}
+	moveAll(items, 9.0, 10.0)
+	fmt.Println("After move of items")
+	for _, item := range items {
+		fmt.Printf("- %#v", item)
+	}
+}
+
+type Moveable interface {
+	Move(float64, float64)
+}
+
+func moveAll(items []Moveable, lat float64, lng float64) {
+	for _, item := range items {
+		item.Move(lat, lng)
+	}
+}
+
+type Car struct {
+	ID string
+	Location
+}
+
+func NewCar(id string, latitude float64, longitude float64) (Car, error) {
+	loc, err := NewLocation(latitude, longitude)
+	if err != nil {
+		return Car{}, err
+	}
+	car := Car{
+		ID:       id,
+		Location: loc,
+	}
+	return car, nil
+}
+
+// effectively Location class in python
+type Location struct {
+	Latitude  float64
+	Longitude float64
+}
+
+func NewLocation(latitude, longitude float64) (Location, error) {
+	if latitude < -90 || latitude > 90 {
+		return Location{}, fmt.Errorf("Invalid latitude: %#v", latitude)
+	}
+	if longitude < -180 || longitude > 180 {
+		return Location{}, fmt.Errorf("Invalid longitude: %#v", longitude)
+	}
+	loc := Location{
+		Latitude:  latitude,
+		Longitude: longitude,
+	}
+	return loc, nil
+}
+
+func (l *Location) Move(latitude, longitude float64) {
+	l.Latitude = latitude
+	l.Longitude = longitude
 }
 
 func Sum(values []float64) float64 {
