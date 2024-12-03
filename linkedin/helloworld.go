@@ -143,6 +143,16 @@ func main() {
 	for _, item := range items {
 		fmt.Printf("- %#v", item)
 	}
+
+	fmt.Println("Using generics")
+	fmt.Printf("%d + %d = %d\n", 1, 2, Add(1, 2))
+	fmt.Printf("%f + %f = %f\n", 1.01, 2.02, Add(1.01, 2.02))
+	fmt.Printf("%s + %s = %s\n", "Horus", "Alkebu-Lan", Add("Horus ", "Alkebu-Lan"))
+}
+
+// Generics
+func Add[T int | float64 | string](a, b T) T {
+	return a + b
 }
 
 type Moveable interface {
