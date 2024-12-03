@@ -11,6 +11,26 @@ import (
 	"unicode/utf8"
 )
 
+// Role enum
+type Role string
+
+const (
+	Viewer    Role = "viewer"
+	Developer Role = "developer"
+	Admin     Role = "admin"
+)
+
+// User "class"
+type User struct {
+	Login string
+	Role  Role
+}
+
+// Our first use of passing by ref!
+func Promote(u *User, r Role) {
+	u.Role = r
+}
+
 func main() {
 	msg := "Hello Gophers"
 	fmt.Println(msg)
