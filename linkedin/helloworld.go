@@ -167,20 +167,48 @@ func main() {
 	// time.Sleep(time.Duration(5) * time.Second)
 
 	fmt.Println("Using channels")
+	// NOTE: Channels are blocking by default
 	channels := make(chan int)
-	channels <- 99    // send
+	go func() {
+		channels <- 99 // send using a go routine to avoid deadlock
+	}()
+
 	val := <-channels // receive
 	fmt.Printf("Received %d from the channel\n", val)
+
+	demoWaitGroup()
+}
+
+func demoWaitGroup() {
+	var wg sync.WaitGroup
+	ch := make(chan string)
+
+	for i := 0; i < 3; i++ {
+		go func(id int) {
+			for msg := range ch {
+				time.Sleep(time.Duration(100) * time.Millisecond)
+				fmt.Printf("demoWaitGroup(): %d finished %s\n", id, msg)
+				wg.Done()
+			}
+		}(i)
+	}
+
+	for _, msg := range []string{"A", "B", "C", "D", "E", "F"} {
+		wg.Add(1)
+		ch <- msg
+	}
+	wg.Wait()
+	fmt.Println("All jobs complete")
 }
 
 func worker(n int) {
 	defer waitGroup.Done()
 
-	// ms := 100.0
-	// msd := time.Duration(ms)
-	// time.Sleep(msd * time.Millisecond)
-	// fmt.Printf("Using duration %f, running go routine worker %d\n", ms, n)
-	fmt.Printf("Using wait group, running go routine worker %d\n", n)
+	ms := 100.0
+	msd := time.Duration(ms)
+	time.Sleep(msd * time.Millisecond)
+	fmt.Printf("Using duration %f, running go routine worker %d\n", ms, n)
+	// fmt.Printf("Using wait group, running go routine worker %d\n", n)
 }
 
 type Addable interface {
