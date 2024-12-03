@@ -149,13 +149,22 @@ func main() {
 	fmt.Printf("%f + %f = %f\n", 1.01, 2.02, Add(1.01, 2.02))
 	fmt.Printf("%s + %s = %s\n", "Horus", "Alkebu-Lan", Add("Horus ", "Alkebu-Lan"))
 
+	fmt.Println("Using channels")
+	channels := make(chan int)
+	channels <- 99    // send
+	val := <-channels // receive
+	fmt.Printf("Received %d from the channel\n", val)
+	time.Sleep(time.Duration(5) * time.Second)
+
+	// NOTE: Looks like you can't do both of these at the same time. You get a channels block.
+
 	fmt.Println("Using Go routines")
 	for i := 0; i < 5; i++ {
 		go worker(i)
 	}
+	fmt.Println("Resuming main, waiting to allow threads to complete...")
+	time.Sleep(time.Duration(5) * time.Second)
 
-	fmt.Println("Resuming main")
-	time.Sleep(time.Second)
 }
 
 func worker(n int) {
