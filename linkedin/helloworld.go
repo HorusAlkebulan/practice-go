@@ -43,7 +43,31 @@ func main() {
 
 	fmt.Print("values: ")
 	fmt.Println(values)
-	fmt.Printf("mean: %.2f", mean)
+	fmt.Printf("mean: %.2f\n", mean)
+
+	user := User{"Horus", Viewer}
+	fmt.Printf("User %s -> %s\n", user.Login, user.Role)
+	fmt.Printf("Promoting user %s\n", user.Login)
+	Promote(&user, Admin)
+	fmt.Printf("User %s -> %s\n", user.Login, user.Role)
+}
+
+// a string enum
+type Role string
+
+const (
+	Viewer    Role = "viewer"
+	Developer Role = "developer"
+	Admin     Role = "admin"
+)
+
+type User struct {
+	Login string
+	Role  Role
+}
+
+func Promote(user *User, role Role) {
+	user.Role = role
 }
 
 func Sum(values []float64) float64 {
@@ -53,6 +77,7 @@ func Sum(values []float64) float64 {
 	}
 	return sum
 }
+
 func Mean(values []float64) (float64, error) {
 	if len(values) == 0 {
 		return 0.0, fmt.Errorf("Mean of an empty slice")
@@ -203,7 +228,6 @@ func getMedian() {
 	}
 	fmt.Println("Median:")
 	fmt.Println(median)
-
 }
 
 func countOfWord() {
